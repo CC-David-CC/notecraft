@@ -8296,6 +8296,26 @@ fn clicking_in_an_empty_box_puts_the_caret_there_and_typing_works() {
     }
 }
 
+#[test]
+fn typing_in_the_frame_after_clicking_a_finished_line_keeps_every_letter() {
+    let (_tmp, mut h, (ox, oy)) = blank_page("ui-first-typed-frame", "<p>Field note</p>");
+    let pos = egui::pos2((ox + 35.0) as f32, (oy + 24.0) as f32);
+    h.input_mut().events.push(egui::Event::PointerMoved(pos));
+    for pressed in [true, false] {
+        h.input_mut().events.push(egui::Event::PointerButton {
+            pos,
+            button: egui::PointerButton::Primary,
+            pressed,
+            modifiers: egui::Modifiers::NONE,
+        });
+        h.step();
+    }
+    h.input_mut().events.push(egui::Event::Text("first letters".to_owned()));
+    h.step();
+    settle(&mut h);
+    assert!(h.state().body().is_some_and(|body| body.contains("first letters")));
+}
+
 /// The box and its line can be clicked into again after the caret has been somewhere else.
 #[test]
 fn an_empty_line_can_be_clicked_into_again() {

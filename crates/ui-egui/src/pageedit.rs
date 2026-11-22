@@ -2885,7 +2885,15 @@ pub fn show_blocks(
     // line height left for them; nothing drawn after this is to find it.
     preview::clear_room(ui.ctx());
     if let Some(a) = action {
+        let clicked_text = matches!(a, Action::MoveTo(_, Some(_))) && ui.input(|input| input.pointer.primary_clicked());
         apply_keeping_widths(a, blocks, caret, &mut changed, cols);
+        if clicked_text && let Some(caret) = caret.as_ref().filter(|c| c.focus) {
+            // This pass drew the block as finished text. Give its editor the focus and
+            // draw it in this click's frame, before the next keystroke can reach the canvas.
+            let id = ui.make_persistent_id(("page-block", caret.block));
+            ui.memory_mut(|memory| memory.request_focus(id));
+            ui.ctx().request_discard("focus the clicked notebook line");
+        }
     }
     changed
 }
