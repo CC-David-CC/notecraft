@@ -24,3 +24,8 @@ pub use format::{FormatError, PageFormat};
 pub use kind::NodeKind;
 pub use tag::{CustomTag, Tag};
 pub use text::{Dir, direction, direction_in};
+
+// Playground's browser build (patches/onenote.yaml): files and the clock in the browser.
+#[cfg(target_arch = "wasm32")]
+#[doc(hidden)]
+pub mod playground;

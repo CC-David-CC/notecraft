@@ -211,7 +211,7 @@ pub fn list(page_dir: &Path) -> Vec<(String, u64)> {
     let mut out: Vec<(String, u64)> = match fs::read_dir(page_dir.join("assets")) {
         Ok(rd) => rd
             .filter_map(|e| e.ok())
-            .filter(|e| e.path().is_file())
+            .filter(|e| fs::metadata(e.path()).is_ok_and(|m| m.is_file()))
             .map(|e| (e.file_name().to_string_lossy().into_owned(), e.metadata().map(|m| m.len()).unwrap_or(0)))
             .filter(|(name, _)| !owners.owns(page_dir, name))
             .collect(),
@@ -479,3 +479,7 @@ mod tests {
         assert_eq!(media_kind("noext"), MediaKind::Other);
     }
 }
+
+// Playground's browser build: files (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+use notecraft_model::playground::std;

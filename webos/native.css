@@ -1,0 +1,4 @@
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #f3f1f8; }
+#notecraft_canvas { display:block; width: 100%; height: 100%; }
+#notecraft_loading { position: absolute; inset:0; display:grid; place-items:center; pointer-events:none; color:#393340; font: 16px system-ui,sans-serif; }
+@media (prefers-color-scheme: dark) { html,body {background:#1d1b22;} #notecraft_loading {color:#ded8e7;} }

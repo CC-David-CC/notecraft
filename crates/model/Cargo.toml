@@ -13,3 +13,6 @@ workspace = true
 [dependencies]
 # SystemTime::now() panics on wasm32-unknown-unknown; see the workspace Cargo.toml.
 web-time = { workspace = true }
+
+[target.'cfg(all(target_arch = "wasm32"))'.dependencies]
+web-time = "1"

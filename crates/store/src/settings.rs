@@ -273,3 +273,7 @@ mod tests {
         s.reset().expect("reset missing settings");
     }
 }
+
+// Playground's browser build: files (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+use notecraft_model::playground::std;

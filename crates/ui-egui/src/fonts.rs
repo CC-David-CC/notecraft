@@ -275,6 +275,10 @@ pub fn ensure_page_fonts(ctx: &egui::Context, families: &BTreeSet<String>) -> Ve
 pub fn definitions() -> egui::FontDefinitions {
     let mut fonts = egui::FontDefinitions::default();
     for (name, bytes) in BUNDLED {
+        #[cfg(target_arch = "wasm32")]
+        if bytes.is_empty() {
+            continue;
+        }
         fonts.font_data.insert(name.to_owned(), Arc::new(egui::FontData::from_static(bytes)));
         // Last in each list: a fallback, used only for characters the faces before it lack.
         for family in [egui::FontFamily::Proportional, egui::FontFamily::Monospace] {

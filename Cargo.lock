@@ -3438,6 +3438,7 @@ dependencies = [
  "fontdb",
  "hayro",
  "image",
+ "js-sys",
  "jxl-oxide",
  "log",
  "notecraft-diagram",
@@ -3456,8 +3457,27 @@ dependencies = [
  "sha2",
  "ttf-parser",
  "ureq",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
  "web-time",
  "zip 4.6.1",
+]
+
+[[package]]
+name = "notecraft-web"
+version = "0.0.17"
+dependencies = [
+ "eframe",
+ "egui",
+ "js-sys",
+ "notecraft-engine",
+ "notecraft-formats",
+ "notecraft-model",
+ "notecraft-store",
+ "notecraft-ui-egui",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
 ]
 
 [[package]]

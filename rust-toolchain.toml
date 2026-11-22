@@ -5,6 +5,7 @@
 # This is a pin, not a floor. The oldest Rust that can still build NoteCraft is `rust-version`
 # in Cargo.toml. Raise the pin in a change of its own, and run `cargo xtask ci` in that change.
 [toolchain]
+targets = ["wasm32-unknown-unknown"]
 channel = "1.99.1"
 components = ["clippy", "rustfmt"]
 profile = "minimal"

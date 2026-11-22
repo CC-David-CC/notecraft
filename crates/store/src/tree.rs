@@ -82,7 +82,7 @@ pub(crate) fn raw_title(format: PageFormat, text: &str) -> Option<String> {
 /// The content file of a page. If a folder has both `index.html` and `index.md`
 /// (which `check` reports), HTML wins.
 pub fn page_file(dir: &Path) -> Option<(PageFormat, PathBuf)> {
-    PageFormat::ALL.iter().map(|f| (*f, dir.join(f.file_name()))).find(|(_, p)| p.is_file())
+    PageFormat::ALL.iter().map(|f| (*f, dir.join(f.file_name()))).find(|(_, p)| fs::metadata(p).is_ok_and(|m| m.is_file()))
 }
 
 pub fn read_node(dir: &Path) -> Option<NodeInfo> {
@@ -127,7 +127,7 @@ pub fn child_dirs(dir: &Path) -> Vec<PathBuf> {
         Ok(rd) => rd
             .filter_map(|e| e.ok())
             .map(|e| e.path())
-            .filter(|p| p.is_dir())
+            .filter(|p| fs::metadata(p).is_ok_and(|m| m.is_dir()))
             .map(|p| (folder_name(&p), p))
             .filter(|(n, _)| n != "assets" && !n.starts_with('.'))
             .map(|(n, p)| (read_node(&p).map(|i| i.order).unwrap_or(0), n, p))
@@ -219,3 +219,7 @@ mod tests {
         assert_eq!(branches.len(), 11);
     }
 }
+
+// Playground's browser build: files (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+use notecraft_model::playground::std;

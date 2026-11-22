@@ -137,9 +137,9 @@ pub fn resolve_in(roots: &[PathBuf], page_dir: &Path, href: &str) -> Link {
     if !roots.iter().any(|r| full.starts_with(r)) {
         return Link::Outside;
     }
-    if full.is_dir() {
+    if std::fs::metadata(&full).is_ok_and(|m| m.is_dir()) {
         if read_node(&full).is_some() { Link::Node(full) } else { Link::File(full) }
-    } else if full.is_file() {
+    } else if std::fs::metadata(&full).is_ok_and(|m| m.is_file()) {
         Link::File(full)
     } else {
         Link::Missing(full)
@@ -480,3 +480,7 @@ mod tests {
         assert_eq!(percent_decode("%FF"), "%FF", "not UTF-8: kept as written");
     }
 }
+
+// Playground's browser build: files (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+use notecraft_model::playground::std;

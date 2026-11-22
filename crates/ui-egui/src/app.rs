@@ -1732,7 +1732,7 @@ impl NoteCraftApp {
         } else {
             self.session.root().join(saved.replace('/', std::path::MAIN_SEPARATOR_STR))
         };
-        if !path.is_dir() {
+        if !std::fs::metadata(&path).is_ok_and(|m| m.is_dir()) {
             return;
         }
         // Open every container above it, up to the notebook it is in, so the page is visible in
@@ -4793,9 +4793,16 @@ impl NoteCraftApp {
     /// is already open. A folder that is itself a notebook opens as one; a folder that
     /// holds notebooks opens all of them. Nothing is closed and nothing is moved.
     fn choose_notebooks_folder(&mut self) {
-        let Some(picked) =
-            rfd::FileDialog::new().set_title(crate::tl_id!("ui.choose_a_notebook_a_folder_of_notebooks_or_an_empty_9de57f8f1f")).pick_folder()
-        else {
+        let Some(picked) = ({
+            #[cfg(not(target_arch = "wasm32"))]
+            {
+                rfd::FileDialog::new().set_title(crate::tl_id!("ui.choose_a_notebook_a_folder_of_notebooks_or_an_empty_9de57f8f1f")).pick_folder()
+            }
+            #[cfg(target_arch = "wasm32")]
+            {
+                None::<std::path::PathBuf>
+            }
+        }) else {
             return;
         };
         self.open_notebooks_from_folder(picked);
@@ -5796,6 +5803,10 @@ impl NoteCraftApp {
     /// clipper never arrived and Ctrl+V did nothing at all. The clipboard is read here
     /// directly instead.
     fn paste_here(&mut self) {
+        #[cfg(target_arch = "wasm32")]
+        if let Some(note) = crate::clipboard::arboard::ask() {
+            return self.say(note);
+        }
         let Some(dir) = self.editor.as_ref().map(|e| e.dir.clone()) else {
             self.say(crate::tl_id!("ui.open_a_page_first"));
             return;
@@ -10378,9 +10389,11 @@ impl NoteCraftApp {
                     .frame(modal_frame(&self.tokens))
                     .show(ctx, |ui| {
                         stay_above(ui, backdrop);
-                        ui.set_min_width(520.0);
+                        let width = (ctx.content_rect().width() - 48.0).clamp(1.0, 520.0);
+                        ui.set_width(width);
                         if *step == 0 {
-                            ui.add(egui::Image::from_bytes(banner_uri, banner_bytes).fit_to_exact_size(vec2(480.0, 240.0)));
+                            let banner_width = width.min(480.0);
+                            ui.add(egui::Image::from_bytes(banner_uri, banner_bytes).fit_to_exact_size(vec2(banner_width, banner_width / 2.0)));
                             ui.add_space(8.0);
                         }
                         modal_title(ui, &self.tokens, title.as_str());
@@ -12666,6 +12679,10 @@ impl NoteCraftApp {
         if self.dock_pending {
             self.dock_pending = false;
             self.toggle_dock(ctx);
+        }
+        #[cfg(target_arch = "wasm32")]
+        if crate::clipboard::arboard::arrived(ctx) {
+            self.paste_here();
         }
         if let Some(text) = self.pending_copy.take() {
             if let Some(html) = self.pending_copy_html.take() {
@@ -15178,5 +15195,41 @@ mod tabs_layout_tests {
         }
         let open = h.state().editor.as_ref().map(|e| e.dir.clone()).expect("a page open");
         assert!(open.starts_with(&section), "a tab opens a page of its section: {open:?}");
+    }
+}
+
+// Playground's browser build: files and the clock (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+use notecraft_model::playground::std;
+
+// Playground's browser build: rfd has no dialogs on wasm (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+mod rfd {
+    pub struct FileDialog;
+    impl FileDialog {
+        pub fn new() -> Self {
+            FileDialog
+        }
+        pub fn set_title(self, _: impl Into<String>) -> Self {
+            self
+        }
+        pub fn set_directory(self, _: impl AsRef<std::path::Path>) -> Self {
+            self
+        }
+        pub fn pick_folder(self) -> Option<std::path::PathBuf> {
+            None
+        }
+        pub fn pick_file(self) -> Option<std::path::PathBuf> {
+            None
+        }
+        pub fn set_file_name(self, _: impl Into<String>) -> Self {
+            self
+        }
+        pub fn add_filter(self, _: impl Into<String>, _: &[impl ToString]) -> Self {
+            self
+        }
+        pub fn save_file(self) -> Option<std::path::PathBuf> {
+            None
+        }
     }
 }

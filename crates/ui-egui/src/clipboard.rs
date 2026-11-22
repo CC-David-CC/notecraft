@@ -260,3 +260,8 @@ mod tests {
         assert_eq!(html_link("A <page>", "notecraft:/book/page?a&b"), "<p><a href=\"notecraft:/book/page?a&amp;b\">A &lt;page&gt;</a></p>");
     }
 }
+
+// Playground's browser build: the browser's clipboard (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+#[path = "playground_clipboard.rs"]
+pub(crate) mod arboard;

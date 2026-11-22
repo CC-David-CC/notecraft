@@ -293,3 +293,7 @@ mod tests {
         assert_eq!(h.len(), 3, "the next drag is a step of its own");
     }
 }
+
+// Playground's browser build: the clock (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+use notecraft_model::playground::std;

@@ -24,3 +24,7 @@ mod tests {
         assert_eq!(a.len(), 20);
     }
 }
+
+// Playground's browser build: the clock (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+use crate::playground::std;

@@ -362,3 +362,7 @@ mod tests {
         assert_eq!(guarded(|| 7).ok(), Some(7));
     }
 }
+
+// Playground's browser build: files (patches/onenote.yaml).
+#[cfg(target_arch = "wasm32")]
+use notecraft_model::playground::std;

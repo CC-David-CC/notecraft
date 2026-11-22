@@ -36,7 +36,10 @@ pub mod fonts {
     pub const DEVANAGARI: &[u8] = include_bytes!("../../../assets/fonts/NotoSansDevanagari.ttf");
     /// Noto Sans CJK SC, Regular, 16 MB: Chinese, Japanese and Korean, with Simplified Chinese
     /// forms where the scripts share a character.
+    #[cfg(not(target_arch = "wasm32"))]
     pub const CJK: &[u8] = include_bytes!("../../../assets/fonts/NotoSansCJKsc-Regular.otf");
+    #[cfg(target_arch = "wasm32")]
+    pub const CJK: &[u8] = &[];
 
     /// All of them, in fallback order, each with the name the window registers it under.
     pub const ALL: [(&str, &[u8]); 4] =

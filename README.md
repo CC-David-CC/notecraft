@@ -53,6 +53,8 @@
   <a href="#credits-and-licence">Credits and licence</a>
 </p>
 
+The WebOS browser integration opens and saves native notebooks through Files. [WebOS build and usage](webos/README.md)
+
 ## A tour
 
 Optional local dictation is available with `cargo build -p notecraft --features voice`.

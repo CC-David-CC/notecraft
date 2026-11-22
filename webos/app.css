@@ -1,0 +1,38 @@
+.notecraft-webos {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.notecraft-filebar {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem;
+  padding: .25rem .5rem;
+  border-bottom: 1px solid #cfc7dc;
+  background: #f6f4f9;
+  color: #30293a;
+  font: 14px/1.35 system-ui, sans-serif;
+}
+
+.notecraft-filebar button {
+  padding: .4rem .65rem;
+  border: 1px solid #bdb4c9;
+  border-radius: .25rem;
+  background: white;
+  color: inherit;
+  font: inherit;
+}
+
+.notecraft-filebar button:focus-visible {
+  outline: 2px solid #7144a8;
+  outline-offset: 1px;
+}
+
+.notecraft-filebar button:disabled { opacity: .6; }
+.notecraft-filebar [role=status] { flex: 1 1 8rem; padding-inline: .35rem; overflow-wrap: anywhere; }
+.notecraft-webos iframe { border: 0; min-height: 0; width: 100%; flex: 1; }
+@media (pointer: coarse) { .notecraft-filebar button { min-height: 44px; } }
