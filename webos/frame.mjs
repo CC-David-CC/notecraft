@@ -19,7 +19,11 @@ globalThis.playgroundFiles = {
   ready: () => host.ready(), failed: message => host.failed(message)
 };
 const failed = reason => globalThis.playgroundFiles.failed(String(reason?.message ?? reason));
-window.addEventListener('error', event => failed(event.error ?? event.message));
+window.addEventListener('error', event => {
+  // The browser can defer resize notifications to a later frame.
+  if (event.error == null && event.message === 'ResizeObserver loop completed with undelivered notifications.') return;
+  failed(event.error ?? event.message);
+});
 window.addEventListener('unhandledrejection', event => failed(event.reason));
 try {
   const {default: initialize} = await import('./native/notecraft.js');
